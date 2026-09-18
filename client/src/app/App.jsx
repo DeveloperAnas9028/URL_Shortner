@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import axios from "axios";
 import './App.css';
 
+
 const App = () => {
   const [urls, setUrls] = useState([]);
   const [inputValue, setInputValue] = useState("");
@@ -9,10 +10,12 @@ const App = () => {
   const [copiedId, setCopiedId] = useState(null);
   const [copiedMain, setCopiedMain] = useState(false);
 
+  const BASE_URL = "https://url-shortner-nffn.onrender.com";
+
   //Function to fetch direct real url data from DB(Backend)
   async function fetchUrls() {
     try {
-      const response = await axios.get("http://localhost:5173/api/url");
+      const response = await axios.get(`${BASE_URL}/api/url`);
       const responseData = response.data.data.urls;
       setUrls(responseData);
     } catch (error) {
@@ -20,12 +23,12 @@ const App = () => {
     }
   }
 
-   //Function to create Short Url 
+  //Function to create Short Url 
   async function createShortUrl() {
     if (!inputValue.trim()) return;
 
     try {
-      const response = await axios.post("http://localhost:5173/api/url", {
+      const response = await axios.post(`${BASE_URL}/api/url`, {
         url: inputValue
       });
 
@@ -44,7 +47,7 @@ const App = () => {
   //Function to delete Url data directly from backend and also for Frontend  
   async function deleteUrl(id) {
     try {
-      await axios.delete(`http://localhost:5173/api/url/${id}`);
+      await axios.delete(`${BASE_URL}/api/url/${id}`);
       setUrls(urls.filter((item) => item._id !== id));
     } catch (error) {
       console.error("Error deleting URL:", error);
@@ -115,10 +118,10 @@ const App = () => {
             </span>
             <div className="bg-[#0e1626] border border-slate-800 rounded-2xl p-4 px-6 flex items-center justify-between shadow-xl">
               <span className="text-orange-400 font-semibold text-base tracking-wide truncate max-w-[75%]">
-                http://localhost:3000/{currentUrl?.shortCode}
+                {BASE_URL}/{currentUrl?.shortCode}
               </span>
               <button
-                onClick={() => handleCopy(`http://localhost:3000/${currentUrl.shortCode}`)}
+                onClick={() => handleCopy(`${BASE_URL}/${currentUrl.shortCode}`)}
                 className="bg-orange-600 hover:bg-orange-500 active:scale-95 text-white font-medium text-xs sm:text-sm px-6 py-2.5 rounded-xl transition-all duration-150 cursor-pointer shadow-sm"
               >
                 {copiedMain ? "Copied!" : "Copy"}
@@ -131,7 +134,7 @@ const App = () => {
         <div className="mt-4 flex items-center justify-between px-1">
           <div>
             <h2 className="text-xl font-bold text-white tracking-wide">
-              Total URLs :   {urls.length}
+              Total URLs :  {urls.length}
             </h2>
             <p className="text-xs text-slate-400 mt-0.5">
               Manage your shortened links
@@ -158,7 +161,7 @@ const App = () => {
                   SHORT CODE
                 </span>
                 <a
-                  href={`http://localhost:3000/${url.shortCode}`}
+                  href={`${BASE_URL}/${url.shortCode}`}
                   target="_blank"
                   rel="noreferrer"
                   onClick={() => handleLinkClick(url._id)}
@@ -191,7 +194,7 @@ const App = () => {
               {/* Actions Column */}
               <div className="flex items-center gap-2.5 shrink-0">
                 <button
-                  onClick={() => handleCopy(`http://localhost:3000/${url.shortCode}`, url._id)}
+                  onClick={() => handleCopy(`${BASE_URL}/${url.shortCode}`, url._id)}
                   className="bg-orange-600 hover:bg-orange-500 active:scale-95 text-white text-xs font-medium px-4 py-2 rounded-xl transition-all cursor-pointer"
                 >
                   {copiedId === url._id ? "Copied!" : "Copy"}
